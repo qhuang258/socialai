@@ -1,35 +1,37 @@
+
 package backend
 
 import (
-   "context"
-   "fmt"
-   "io"
+    "context"
+    "fmt"
+    "io"
 
-   "socialai/constants"
+    "socialai/util"
 
-   "cloud.google.com/go/storage"
+    "cloud.google.com/go/storage"
 )
 
 var (
-   GCSBackend *GoogleCloudStorageBackend
+    GCSBackend *GoogleCloudStorageBackend
 )
 
 type GoogleCloudStorageBackend struct {
-   client *storage.Client
-   bucket string
+    client *storage.Client
+    bucket string
 }
 
-func InitGCSBackend() {
-   client, err := storage.NewClient(context.Background())
-   if err != nil {
-       panic(err)
-   }
+func InitGCSBackend(config *util.GCSInfo) {
+    client, err := storage.NewClient(context.Background())
+    if err != nil {
+        panic(err)
+    }
 
-   GCSBackend = &GoogleCloudStorageBackend{
-       client: client,
-       bucket: constants.GCS_BUCKET,
-   }
+    GCSBackend = &GoogleCloudStorageBackend{
+        client: client,
+        bucket: config.Bucket,
+    }
 }
+
 
 func (backend *GoogleCloudStorageBackend) SaveToGCS(r io.Reader, objectName string) (string, error) {
    ctx := context.Background()

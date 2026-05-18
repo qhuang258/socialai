@@ -1,30 +1,32 @@
 package backend
 
-import (
-   "socialai/constants"
-   "context"
-   "fmt"
 
-   "github.com/olivere/elastic/v7"
+import (
+    "context"
+    "fmt"
+
+    "socialai/constants"
+    "socialai/util"
+
+    "github.com/olivere/elastic/v7"
 )
 
-// a global ESClient
-var ESBackend *ElasticsearchBackend
 
-// Wrap ESClient
+var (
+    ESBackend *ElasticsearchBackend
+)
+
 type ElasticsearchBackend struct {
-   client *elastic.Client
+    client *elastic.Client
 }
 
-// ========================
-// initialize EsClient, create index
-func InitElasticsearchBackend() {
-   client, err := elastic.NewClient(
-       elastic.SetURL(constants.ES_URL),
-       elastic.SetBasicAuth(constants.ES_USERNAME, constants.ES_PASSWORD))
-   if err != nil {
-       panic(err)
-   }
+func InitElasticsearchBackend(config *util.ElasticsearchInfo) {
+    client, err := elastic.NewClient(
+        elastic.SetURL(config.Address),
+        elastic.SetBasicAuth(config.Username, config.Password))
+    if err != nil {
+        panic(err)
+    }
 
    exists, err := client.IndexExists(constants.POST_INDEX).Do(context.Background())
    if err != nil {
